@@ -1,0 +1,31 @@
+{
+    "name": "swag/create-tag-action",
+    "description": "The simple example plugin for how to add the action to Flow Builder Actions",
+    "version": "1.0.0",
+    "type": "shopware-platform-plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Shopware"
+        }
+    ],
+    "require": {
+        "shopware/core": "6.4.*"
+    },
+    "extra": {
+        "shopware-plugin-class": "Swag\\CreateTagAction\\SwagCreateTagAction",
+        "label": {
+            "de-DE": "Der angezeigte lesbare Name für das Plugin",
+            "en-GB": "The displayed readable name for the plugin"
+        },
+        "description": {
+            "de-DE": "Beschreibung in der Administration für das Plugin",
+            "en-GB": "Description in the Administration for this plugin"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Swag\\CreateTagAction\\": "src/"
+        }
+    }
+}
