@@ -6,8 +6,7 @@
 
     <services>
         <service id="Swag\CreateTagAction\Core\Content\Flow\Dispatching\Action\CreateTagAction">
-            <argument type="service" id="tag.repository"/>
-            <tag name="kernel.event_subscriber"/>
+            <argument type="service" id="tag.repository" />
             <tag name="flow.action" priority="600" key="action.create.tag"/>
         </service>
 

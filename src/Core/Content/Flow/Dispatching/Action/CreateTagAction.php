@@ -3,17 +3,16 @@
 namespace Swag\CreateTagAction\Core\Content\Flow\Dispatching\Action;
 
 use Shopware\Core\Content\Flow\Dispatching\Action\FlowAction;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
-use Shopware\Core\Framework\Event\CustomerAware;
+use Shopware\Core\Content\Flow\Dispatching\StorableFlow;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\Uuid\Uuid;
-use Shopware\Core\Framework\Event\FlowEvent;
 use Swag\CreateTagAction\Core\Framework\Event\TagAware;
 
 class CreateTagAction extends FlowAction
 {
-    private EntityRepositoryInterface $tagRepository;
+    private EntityRepository $tagRepository;
 
-    public function __construct(EntityRepositoryInterface $tagRepository)
+    public function __construct(EntityRepository $tagRepository)
     {
         // you would need this repository to create a tag
         $this->tagRepository = $tagRepository;
@@ -25,36 +24,33 @@ class CreateTagAction extends FlowAction
         return 'action.create.tag';
     }
 
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            self::getName() => 'handle',
-        ];
-    }
-
     public function requirements(): array
     {
-        return [TagAware::class, CustomerAware::class];
+        return [];
     }
 
-    public function handle(FlowEvent $event): void
+    public function handleFlow(StorableFlow $flow): void
     {
-        // config is the "Configuration data" you get after you create a flow sequence
-        $config = $event->getConfig();
+        // config is the config data when created a flow sequence
+        $config = $flow->getConfig();
 
-        // make sure your "tags" data exists
+        // make sure your tags data is exists
         if (!\array_key_exists('tags', $config)) {
             return;
         }
 
-        $baseEvent = $event->getEvent();
-
         $tags = $config['tags'];
 
-        // just a step to make sure you are dispatching the correct action
-        if (!$baseEvent instanceof TagAware || empty($tags)) {
+        // just a step to make sure you're dispatching correct action
+        if (!$flow->hasStore(TagAware::TAG_ID) || empty($tags)) {
             return;
         }
+
+        // get tag id
+        $tagId = $flow->getStore(TagAware::TAG_ID);
+
+        // get tag
+        $tag = $flow->getData(TagAware::TAG);
 
         $tagData = [];
         foreach ($tags as $tag) {
@@ -65,6 +61,6 @@ class CreateTagAction extends FlowAction
         }
 
         // simply create tags
-        $this->tagRepository->create($tagData, $baseEvent->getContext());
+        $this->tagRepository->create($tagData, $flow->getContext());
     }
 }
